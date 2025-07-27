@@ -1,4 +1,6 @@
 django
 djangorestframework
 scikit-learn
-joblib
+numpy
+pandas
+pickle

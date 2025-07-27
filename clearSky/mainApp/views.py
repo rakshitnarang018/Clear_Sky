@@ -1,22 +1,29 @@
-import joblib
-import os
+import pickle
+import numpy as np
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from .serializers import ClearSkyInputSerializer
 
-MODEL_PATH = os.path.join(os.path.dirname(__file__), 'ml_model/sky_model.pkl')
-model = joblib.load(MODEL_PATH)
+with open("clearSky/sky_model.pkl", "rb") as f:
+    model = pickle.load(f)
 
 class PredictSkyView(APIView):
     def post(self, request):
-        try:
-            data = request.data
-            features = [
-                float(data.get('temperature')),
-                float(data.get('humidity')),
-                float(data.get('clouds'))
-            ]
-            prediction = model.predict([features])[0]
-            return Response({'prediction': prediction})
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = ClearSkyInputSerializer(data=request.data)
+        if serializer.is_valid():
+            input_data = serializer.validated_data
+            features = np.array(list(zip(
+                input_data['temperature'],
+                input_data['humidity'],
+                input_data['clouds'],
+                input_data['wind_speed'],
+                input_data['pressure'],
+                input_data['visibility'],
+                input_data['dew_point'],
+                input_data['uv_index'],
+                input_data['precipitation'],
+            )))
+            prediction = model.predict(features)
+            result = ['Clear' if val == 1 else 'Not Clear' for val in prediction]
+            return Response({"prediction": result})
+        return Response(serializer.errors, status=400)
