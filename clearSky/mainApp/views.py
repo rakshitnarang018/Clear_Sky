@@ -1,5 +1,7 @@
 import pickle
 import numpy as np
+from django.http import JsonResponse
+from .traffic import fetch_air_traffic, fetch_satellite_traffic
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import ClearSkyInputSerializer
@@ -27,3 +29,11 @@ class PredictSkyView(APIView):
             result = ['Clear' if val == 1 else 'Not Clear' for val in prediction]
             return Response({"prediction": result})
         return Response(serializer.errors, status=400)
+
+def air_traffic_view(request):
+    data = fetch_air_traffic()
+    return JsonResponse(data)
+
+def satellite_traffic_view(request):
+    data = fetch_satellite_traffic()
+    return JsonResponse(data)
