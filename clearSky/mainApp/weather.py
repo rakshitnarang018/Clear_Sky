@@ -1,20 +1,45 @@
 import requests
 import os
 
-API_KEY = os.getenv("OPENWEATHERMAP_API_KEY")  # Put your API key in .env
+OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY", "YOUR_API_KEY_HERE")
+BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
-def get_weather_data(lat: float, lon: float):
-    url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API_KEY}&units=metric"
-    response = requests.get(url)
-    data = response.json()
+def fetch_weather(city):
 
-    weather = {
-        "temperature": data["main"]["temp"],
-        "pressure": data["main"]["pressure"],
-        "humidity": data["main"]["humidity"],
-        "visibility": data.get("visibility", None),
-        "clouds": data["clouds"]["all"],
-        "wind_speed": data["wind"]["speed"],
-        "wind_deg": data["wind"]["deg"]
-    }
-    return weather
+    if not city:
+        return {"success": False, "error": "City name is required"}
+
+    try:
+        params = {
+            "q": city,
+            "appid": OPENWEATHER_API_KEY,
+            "units": "metric"
+        }
+        response = requests.get(BASE_URL, params=params, timeout=10)
+        response.raise_for_status()
+        raw_data = response.json()
+
+        if not all(k in raw_data for k in ["coord", "main", "wind", "clouds", "weather"]):
+            return {"success": False, "error": "Incomplete data from weather API"}
+
+        return {
+            "success": True,
+            "city": raw_data.get("name", city),
+            "coordinates": {
+                "latitude": raw_data["coord"].get("lat"),
+                "longitude": raw_data["coord"].get("lon")
+            },
+            "temperature": raw_data["main"].get("temp"),
+            "humidity": raw_data["main"].get("humidity"),
+            "pressure": raw_data["main"].get("pressure"),
+            "wind_speed": raw_data["wind"].get("speed"),
+            "cloud_percentage": raw_data["clouds"].get("all"),
+            "weather_description": (
+                raw_data["weather"][0].get("description") if raw_data.get("weather") else None
+            )
+        }
+
+    except requests.exceptions.RequestException as e:
+        return {"success": False, "error": f"API request failed: {str(e)}"}
+    except (KeyError, IndexError, TypeError) as e:
+        return {"success": False, "error": f"Unexpected API data format: {str(e)}"}

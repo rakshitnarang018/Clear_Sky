@@ -1,9 +1,10 @@
 from django.urls import path
-from .views import PredictSkyView
+from .views import PredictSkyView, WeatherView, air_traffic_view, satellite_traffic_view
 from . import views
 
 urlpatterns = [
     path('predict/',PredictSkyView.as_view(), name='predict-sky'),
-    path('air-traffic/',views.air_traffic_view, name = 'air-traffic'),
-    path('satellite-traffic/',views.satellite_traffic_view, name = 'satellite_traffic'),
+    path('weather/', WeatherView.as_view(), name='weather'),
+    path('air-traffic/',air_traffic_view.as_view(), name = 'air-traffic'),
+    path('satellite-traffic/',satellite_traffic_view.as_view(), name = 'satellite_traffic'),
 ]

@@ -1,48 +1,65 @@
 import pickle
-import numpy as np
-from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .prediction import predict_cloud_coverage
+from .prediction import predict_sky
 from .geocode import get_coordinates_from_place
-from .weather import get_weather_data
+from .weather import fetch_weather
 from .traffic import fetch_air_traffic, fetch_satellite_traffic
-from .serializers import ClearSkyInputSerializer
 
 with open("clearSky/sky_model.pkl", "rb") as f:
     model = pickle.load(f)
 
 
 class PredictSkyView(APIView):
-    def post(self, request):
-        place = request.data.get("place")
+    def get(self, request):
+        place = request.query_params.get("place")
+        city = request.query_params.get("city")
 
-        if not place:
-            return Response({"error": "Missing 'place' in request body"}, status=400)
+        if not place and not city:
+            return Response({"success": False, "error": "Provide either 'place' or 'city'."}, status=400)
 
-        coords = get_coordinates_from_place(place)
+        if place:
+            coords = get_coordinates_from_place(place)
+            if not coords or coords == (None, None):
+                return Response({"success": False, "error": "Could not get coordinates for place"}, status=400)
+            lat, lon = coords
+        else:
+            lat = lon = None
 
-        if not coords or coords == (None, None):
-            return Response({"error": "Could not get coordinates for place"}, status=400)
+        weather_data = fetch_weather(city or place)
+        if not weather_data.get("success"):
+            return Response({"success": False, "error": "Could not fetch weather data"}, status=500)
 
-        lat, lon = coords
+        prediction_data = predict_sky(city or place)
 
-        cloud_percentage = predict_cloud_coverage(lat, lon)
         return Response({
-            "place": place,
+            "success": True,
+            "place": place or city,
             "latitude": lat,
             "longitude": lon,
-            "cloud_percentage": cloud_percentage,
-            "prediction": "Clear" if cloud_percentage < 30 else "Cloudy"
+            "weather": weather_data,
+            "prediction": prediction_data.get("prediction")
         })
 
-    #except Exception as e:
-        #return Response({"error": str(e)}, status=500)
 
-def air_traffic_view(request):
-    data = fetch_air_traffic()
-    return JsonResponse(data)
+class air_traffic_view(APIView):
+    def get(self, request):
+        return Response({
+            "success": True,
+            "data": fetch_air_traffic()
+        })
 
-def satellite_traffic_view(request):
-    data = fetch_satellite_traffic()
-    return JsonResponse(data)
+
+class satellite_traffic_view(APIView):
+    def get(self, request):
+        return Response({
+            "success": True,
+            "data": fetch_satellite_traffic()
+        })
+
+
+class WeatherView(APIView):
+    def get(self, request):
+        city = request.query_params.get("city", "Delhi")
+        weather = fetch_weather(city)
+        return Response(weather)
