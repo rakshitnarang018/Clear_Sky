@@ -1,68 +1,220 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+/* Clear_Sky Design System - Futuristic Night Sky Theme
+All colors MUST be HSL. Cosmic blues, purples, neon accents.
+*/
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
+@layer base {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    /* Core cosmic background colors */
+    --background: 226 50% 4%;          /* Deep space navy */
+    --foreground: 210 100% 95%;        /* Bright white text */
+
+    /* Card system with cosmic glass effect */
+    --card: 240 30% 8%;                /* Dark purple-blue cards */
+    --card-foreground: 210 100% 95%;   
+    --glass: 240 40% 12%;              /* Semi-transparent glass */
+
+    /* Popover dark theme */
+    --popover: 240 30% 6%;
+    --popover-foreground: 210 100% 95%;
+
+    /* Primary - Neon cyan glow */
+    --primary: 189 100% 60%;           /* Bright cyan */
+    --primary-foreground: 226 50% 4%;  /* Dark text on bright */
+    --primary-glow: 189 100% 70%;      /* Lighter cyan glow */
+
+    /* Secondary - Neon magenta */
+    --secondary: 300 100% 60%;         /* Bright magenta */
+    --secondary-foreground: 210 100% 95%;
+    --secondary-glow: 300 100% 70%;
+
+    /* Muted - Dark cosmic grays */
+    --muted: 240 20% 15%;
+    --muted-foreground: 240 20% 65%;
+
+    /* Accent - Electric purple */
+    --accent: 270 100% 70%;
+    --accent-foreground: 226 50% 4%;
+    --accent-glow: 270 100% 80%;
+
+    /* Status colors with sci-fi feel */
+    --success: 120 100% 50%;           /* Bright green */
+    --warning: 45 100% 60%;            /* Amber warning */
+    --destructive: 0 100% 60%;         /* Neon red */
+    --destructive-foreground: 210 100% 95%;
+
+    /* Interactive elements */
+    --border: 240 30% 20%;             /* Subtle borders */
+    --input: 240 30% 12%;              /* Input backgrounds */
+    --ring: 189 100% 60%;              /* Focus rings in cyan */
+
+    /* Cosmic gradients */
+    --gradient-cosmic: linear-gradient(135deg, hsl(240 30% 8%), hsl(270 40% 12%), hsl(300 30% 8%));
+    --gradient-aurora: linear-gradient(90deg, hsl(189 100% 60%), hsl(270 100% 70%), hsl(300 100% 60%));
+    --gradient-nebula: radial-gradient(circle, hsl(270 100% 70% / 0.3), hsl(189 100% 60% / 0.2), transparent);
+
+    /* Glows and effects */
+    --glow-cyan: 0 0 20px hsl(189 100% 60% / 0.6);
+    --glow-magenta: 0 0 20px hsl(300 100% 60% / 0.6);
+    --glow-purple: 0 0 20px hsl(270 100% 70% / 0.6);
+
+    /* Shadows with cosmic feel */
+    --shadow-cosmic: 0 10px 30px -10px hsl(240 30% 4% / 0.8);
+    --shadow-glow: 0 0 40px hsl(189 100% 60% / 0.3);
+
+    --radius: 0.75rem;
+
+    /* Fonts */
+    --font-heading: 'Exo 2', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'Roboto Mono', monospace;
+
+    /* Animations */
+    --transition-cosmic: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-glow: box-shadow 0.3s ease-in-out;
   }
-  a:hover {
-    color: #747bff;
+
+  /* Dark mode is our primary mode */
+  .dark {
+    --background: 226 50% 4%;
+    --foreground: 210 100% 95%;
+    --card: 240 30% 8%;
+    --card-foreground: 210 100% 95%;
+    --popover: 240 30% 6%;
+    --popover-foreground: 210 100% 95%;
+    --primary: 189 100% 60%;
+    --primary-foreground: 226 50% 4%;
+    --secondary: 300 100% 60%;
+    --secondary-foreground: 210 100% 95%;
+    --muted: 240 20% 15%;
+    --muted-foreground: 240 20% 65%;
+    --accent: 270 100% 70%;
+    --accent-foreground: 226 50% 4%;
+    --destructive: 0 100% 60%;
+    --destructive-foreground: 210 100% 95%;
+    --border: 240 30% 20%;
+    --input: 240 30% 12%;
+    --ring: 189 100% 60%;
   }
-  button {
-    background-color: #f9f9f9;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body;
+    font-family: var(--font-body);
+    background: var(--gradient-cosmic);
+    min-height: 100vh;
+  }
+
+  /* Heading fonts */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+
+  /* Mono font for code/data */
+  code, pre, .font-mono {
+    font-family: var(--font-mono);
+  }
+}
+
+@layer components {
+  /* Glow effects */
+  .glow-cyan {
+    box-shadow: var(--glow-cyan);
+  }
+  
+  .glow-magenta {
+    box-shadow: var(--glow-magenta);
+  }
+  
+  .glow-purple {
+    box-shadow: var(--glow-purple);
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    background: hsl(var(--glass) / 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--border));
+  }
+
+  /* Cosmic gradient backgrounds */
+  .bg-cosmic {
+    background: var(--gradient-cosmic);
+  }
+  
+  .bg-aurora {
+    background: var(--gradient-aurora);
+  }
+  
+  .bg-nebula {
+    background: var(--gradient-nebula);
+  }
+
+  /* Hover glow animations */
+  .hover-glow-cyan {
+    transition: var(--transition-glow);
+  }
+  
+  .hover-glow-cyan:hover {
+    box-shadow: var(--glow-cyan);
+  }
+  
+  .hover-glow-magenta {
+    transition: var(--transition-glow);
+  }
+  
+  .hover-glow-magenta:hover {
+    box-shadow: var(--glow-magenta);
+  }
+
+  /* Cosmic animations */
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite alternate;
+  }
+  
+  @keyframes pulse-glow {
+    from {
+      box-shadow: 0 0 10px hsl(var(--primary) / 0.4);
+    }
+    to {
+      box-shadow: 0 0 30px hsl(var(--primary) / 0.8);
+    }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  /* Starfield sparkle effect */
+  .animate-sparkle {
+    animation: sparkle 2s linear infinite;
+  }
+  
+  @keyframes sparkle {
+    0%, 100% {
+      opacity: 0.3;
+      transform: scale(0.8);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.2);
+    }
   }
 }
