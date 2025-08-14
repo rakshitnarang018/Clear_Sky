@@ -5,6 +5,7 @@ from .prediction import predict_sky
 from .geocode import get_coordinates_from_place
 from .weather import fetch_weather
 from .traffic import fetch_air_traffic, fetch_satellite_traffic
+from .models import WeatherData, AirTraffic, SatelliteTraffic  
 
 with open("clearSky/sky_model.pkl", "rb") as f:
     model = pickle.load(f)
@@ -32,6 +33,14 @@ class PredictSkyView(APIView):
 
         prediction_data = predict_sky(city or place)
 
+        WeatherData.objects.create(
+            city=city or place,
+            latitude=lat,
+            longitude=lon,
+            weather_data=weather_data,
+            prediction_result=prediction_data.get("prediction")
+        )
+
         return Response({
             "success": True,
             "place": place or city,
@@ -44,17 +53,25 @@ class PredictSkyView(APIView):
 
 class air_traffic_view(APIView):
     def get(self, request):
+        data = fetch_air_traffic()
+
+        AirTraffic.objects.create(data=data)
+
         return Response({
             "success": True,
-            "data": fetch_air_traffic()
+            "data": data
         })
 
 
 class satellite_traffic_view(APIView):
     def get(self, request):
+        data = fetch_satellite_traffic()
+
+        SatelliteTraffic.objects.create(data=data)
+
         return Response({
             "success": True,
-            "data": fetch_satellite_traffic()
+            "data": data
         })
 
 
@@ -62,4 +79,13 @@ class WeatherView(APIView):
     def get(self, request):
         city = request.query_params.get("city", "Delhi")
         weather = fetch_weather(city)
+
+        WeatherData.objects.create(
+            city=city,
+            latitude=None,  
+            longitude=None,
+            weather_data=weather,
+            prediction_result=None
+        )
+
         return Response(weather)
