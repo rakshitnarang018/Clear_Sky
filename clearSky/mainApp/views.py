@@ -6,6 +6,8 @@ from .geocode import get_coordinates_from_place
 from .weather import fetch_weather
 from .traffic import fetch_air_traffic, fetch_satellite_traffic
 from .models import WeatherData, AirTraffic, SatelliteTraffic  
+from django.conf import settings
+
 
 with open("clearSky/sky_model.pkl", "rb") as f:
     model = pickle.load(f)
@@ -80,12 +82,19 @@ class WeatherView(APIView):
         city = request.query_params.get("city", "Delhi")
         weather = fetch_weather(city)
 
+        latitude = weather.get("coordinates", {}).get("latitude")
+        longitude = weather.get("coordinates", {}).get("longitude")
+
         WeatherData.objects.create(
             city=city,
-            latitude=None,  
-            longitude=None,
+            latitude=latitude,
+            longitude=longitude,
             weather_data=weather,
             prediction_result=None
         )
 
         return Response(weather)
+
+#def fetch_weather(city):
+#   url = f"{settings.BASE_URL}?q={city}&appid={settings.OPENWEATHER_API_KEY}&units=metric"
+    

@@ -1,7 +1,7 @@
 import requests
 import os
 
-OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY", "YOUR_API_KEY_HERE")
+OPENWEATHER_API_KEY = os.getenv("1a60591fa72b518f021b82624db98de2", "1a60591fa72b518f021b82624db98de2")
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
 def fetch_weather(city):
