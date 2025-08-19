@@ -1,11 +1,13 @@
 import requests
 import os
 
-OPENWEATHER_API_KEY = os.getenv("1a60591fa72b518f021b82624db98de2", "1a60591fa72b518f021b82624db98de2")
+OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY", "1a60591fa72b518f021b82624db98de2")
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
+FORECAST_URL = "https://api.openweathermap.org/data/2.5/forecast"
+
 
 def fetch_weather(city):
-
+    """Fetch current weather for a given city"""
     if not city:
         return {"success": False, "error": "City name is required"}
 
@@ -43,3 +45,44 @@ def fetch_weather(city):
         return {"success": False, "error": f"API request failed: {str(e)}"}
     except (KeyError, IndexError, TypeError) as e:
         return {"success": False, "error": f"Unexpected API data format: {str(e)}"}
+
+
+def fetch_forecast(city):
+    """Fetch 3-hour forecast for a given city"""
+    if not city:
+        return {"success": False, "error": "City name is required"}
+
+    try:
+        params = {
+            "q": city,
+            "appid": OPENWEATHER_API_KEY,
+            "units": "metric",
+            "cnt": 1   
+        }
+        response = requests.get(FORECAST_URL, params=params, timeout=10)
+        response.raise_for_status()
+        raw_data = response.json()
+
+        if "list" not in raw_data or len(raw_data["list"]) == 0:
+            return {"success": False, "error": "No forecast data available"}
+
+        forecast = raw_data["list"][0]  # next 3-hour block
+
+        return {
+            "success": True,
+            "city": raw_data["city"].get("name", city),
+            "forecast_time": forecast.get("dt_txt"),
+            "temperature": forecast["main"].get("temp"),
+            "humidity": forecast["main"].get("humidity"),
+            "pressure": forecast["main"].get("pressure"),
+            "wind_speed": forecast["wind"].get("speed"),
+            "cloud_percentage": forecast["clouds"].get("all"),
+            "weather_description": (
+                forecast["weather"][0].get("description") if forecast.get("weather") else None
+            )
+        }
+
+    except requests.exceptions.RequestException as e:
+        return {"success": False, "error": f"Forecast API request failed: {str(e)}"}
+    except (KeyError, IndexError, TypeError) as e:
+        return {"success": False, "error": f"Unexpected forecast data format: {str(e)}"}

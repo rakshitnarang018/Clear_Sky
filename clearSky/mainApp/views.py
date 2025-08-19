@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .prediction import predict_sky
 from .geocode import get_coordinates_from_place
-from .weather import fetch_weather
+from .weather import fetch_weather, fetch_forecast
 from .traffic import fetch_air_traffic, fetch_satellite_traffic
 from .models import WeatherData, AirTraffic, SatelliteTraffic  
 from django.conf import settings
@@ -80,7 +80,9 @@ class satellite_traffic_view(APIView):
 class WeatherView(APIView):
     def get(self, request):
         city = request.query_params.get("city", "Delhi")
+
         weather = fetch_weather(city)
+        forecast = fetch_forecast(city)
 
         latitude = weather.get("coordinates", {}).get("latitude")
         longitude = weather.get("coordinates", {}).get("longitude")
@@ -89,11 +91,16 @@ class WeatherView(APIView):
             city=city,
             latitude=latitude,
             longitude=longitude,
-            weather_data=weather,
-            prediction_result=None
+            weather_data=weather,       
+            prediction_result=forecast  
         )
 
-        return Response(weather)
+        return Response({
+            "current_weather": weather,
+            "forecast": forecast
+        })
+
+
 
 #def fetch_weather(city):
 #   url = f"{settings.BASE_URL}?q={city}&appid={settings.OPENWEATHER_API_KEY}&units=metric"
