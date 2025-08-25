@@ -3,15 +3,26 @@ import requests
 AIR_TRAFFIC_API = "https://opensky-network.org/api/states/all"
 SATELLITE_TRAFFIC_API = "https://api.wheretheiss.at/v1/satellites/25544"
 
-def fetch_air_traffic():
+def fetch_air_traffic(bbox=None):
+    
     try:
-        response = requests.get(AIR_TRAFFIC_API, timeout=10)
+        url = AIR_TRAFFIC_API
+        params = {}
+        if bbox:
+            params = {
+                "lamin": bbox[0],
+                "lomin": bbox[1],
+                "lamax": bbox[2],
+                "lomax": bbox[3]
+            }
+
+        response = requests.get(url, params=params, timeout=10)
         data = response.json()
 
         states = data.get("states", [])
         aircraft_list = []
 
-        for s in states[:10]:  
+        for s in states[:10]:
             aircraft_list.append({
                 "icao24": s[0],
                 "callsign": s[1].strip() if s[1] else None,
@@ -37,6 +48,7 @@ def fetch_air_traffic():
 
     except Exception as e:
         return {"success": False, "error": str(e)}
+
 
 
 def fetch_satellite_traffic():

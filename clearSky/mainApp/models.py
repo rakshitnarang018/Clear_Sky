@@ -16,31 +16,35 @@ class WeatherData(models.Model):
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
 
-    # Store raw API response
-    weather_data = models.JSONField(null=True, blank=True)   
-
-    # Store prediction result
-    prediction_result = models.CharField(max_length=100, null=True, blank=True)
+    weather_data = models.JSONField(null=True, blank=True)   # Raw API response
+    prediction_result = models.JSONField(null=True, blank=True)  # Forecast JSON
 
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-timestamp']
+
     def __str__(self):
-        return f"{self.city} - {self.prediction_result or 'N/A'} - {self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}"
+        return f"{self.city} - {self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}"
 
 
 class AirTraffic(models.Model):
-    # Store complete air traffic API response
     data = models.JSONField(null=True, blank=True)  
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-timestamp']
 
     def __str__(self):
         return f"AirTraffic - {self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}"
 
 
 class SatelliteTraffic(models.Model):
-    # Store complete satellite traffic API response
     data = models.JSONField(null=True, blank=True)   
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-timestamp']
 
     def __str__(self):
         return f"SatelliteTraffic - {self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}"
