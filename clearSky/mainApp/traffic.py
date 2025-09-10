@@ -1,7 +1,7 @@
 import requests
 
 AIR_TRAFFIC_API = "https://opensky-network.org/api/states/all"
-SATELLITE_TRAFFIC_API = "https://api.wheretheiss.at/v1/satellites/25544"
+#SATELLITE_TRAFFIC_API = "https://api.wheretheiss.at/v1/satellites/25544"
 
 def fetch_air_traffic(bbox=None):
     
@@ -50,7 +50,7 @@ def fetch_air_traffic(bbox=None):
         return {"success": False, "error": str(e)}
 
 
-
+"""
 def fetch_satellite_traffic():
     try:
         response = requests.get(SATELLITE_TRAFFIC_API, timeout=10)
@@ -69,3 +69,4 @@ def fetch_satellite_traffic():
 
     except Exception as e:
         return {"success": False, "error": str(e)}
+"""

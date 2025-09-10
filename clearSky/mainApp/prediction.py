@@ -1,12 +1,14 @@
 import pickle
 import numpy as np
 from .weather import fetch_weather
+from .traffic import fetch_air_traffic  
 
 with open("clearSky/sky_model.pkl", "rb") as f:
     model = pickle.load(f)
 
 def predict_sky(city):
 
+    #WEATHER
     weather_data = fetch_weather(city)
 
     if not weather_data.get("success"):
@@ -32,7 +34,16 @@ def predict_sky(city):
         features_array = np.array(features).reshape(1, -1)
 
         prediction_class = model.predict(features_array)[0]
-        prediction_label = "Clear" if prediction_class == 0 else "Cloudy"
+        weather_prediction = "Clear" if prediction_class == 0 else "Cloudy"
+
+        #AIR
+        air_data = fetch_air_traffic(city)
+        flight_count = air_data.get("flight_count", 0)
+
+        if flight_count > 20:
+            final_prediction = "Not Clear (Heavy Air Traffic)"
+        else:
+            final_prediction = weather_prediction
 
         return {
             "success": True,
@@ -43,7 +54,8 @@ def predict_sky(city):
             "wind_speed": weather_data.get("wind_speed"),
             "cloud_percentage": weather_data.get("cloud_percentage"),
             "weather_description": weather_data.get("weather_description"),
-            "prediction": prediction_label
+            "air_traffic": flight_count,
+            "prediction": final_prediction
         }
 
     except Exception as e:

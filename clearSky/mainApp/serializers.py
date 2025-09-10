@@ -20,7 +20,7 @@ class AirTrafficSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class SatelliteTrafficSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SatelliteTraffic
-        fields = '__all__'
+#class SatelliteTrafficSerializer(serializers.ModelSerializer):
+#    class Meta:
+#       model = SatelliteTraffic
+#       fields = '__all__'
