@@ -37,15 +37,3 @@ class AirTraffic(models.Model):
 
     def __str__(self):
         return f"AirTraffic - {self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}"
-
-"""
-class SatelliteTraffic(models.Model):
-    data = models.JSONField(null=True, blank=True)   
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['-timestamp']
-
-    def __str__(self):
-        return f"SatelliteTraffic - {self.timestamp.strftime('%Y-%m-%d %H:%M:%S')}"
-"""

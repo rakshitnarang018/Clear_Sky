@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import APICallLog, WeatherData, AirTraffic, SatelliteTraffic
+from .models import APICallLog, WeatherData, AirTraffic
 
 
 class APICallLogSerializer(serializers.ModelSerializer):
@@ -20,7 +20,3 @@ class AirTrafficSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-#class SatelliteTrafficSerializer(serializers.ModelSerializer):
-#    class Meta:
-#       model = SatelliteTraffic
-#       fields = '__all__'

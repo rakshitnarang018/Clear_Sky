@@ -46,3 +46,5 @@ coverage.xml
 
 
 .env
+train_model.py
+requirements.py

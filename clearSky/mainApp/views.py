@@ -148,37 +148,6 @@ class air_traffic_view(APIView):
         return Response({"success": True, "data": data, "saved_data": saved_data})
 
 
-"""
-class satellite_traffic_view(APIView):
-    def get(self, request):
-        data = fetch_satellite_traffic()
-
-        # Log API call
-        APICallLog.objects.create(
-            endpoint="/api/satellite-traffic/",
-            query_params=request.query_params.dict(),
-            response_data=data
-        )
-
-        satellite_obj = SatelliteTraffic.objects.create(
-            latitude=data.get("satellite", {}).get("latitude"),
-            longitude=data.get("satellite", {}).get("longitude"),
-            altitude_km=data.get("satellite", {}).get("altitude_km"),
-            velocity_km_s=data.get("satellite", {}).get("velocity_km_s"),
-            timestamp=data.get("satellite", {}).get("timestamp"),
-            data=data,
-        )
-
-        serializer = SatelliteTrafficSerializer(satellite_obj)
-
-        return Response(
-            {
-                "success": True,
-                "data": data,
-                "saved_data": serializer.data,
-            }
-        )
-"""
 
 
 class WeatherView(APIView):
